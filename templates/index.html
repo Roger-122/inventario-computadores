@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inventário de Computadores</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 40px auto;
+        }
+
+        /* TÍTULO */
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* ÁREA DE BUSCA */
+        .busca {
+            background: white;
+            width: 600px;
+            max-width: 100%;
+            margin: 0 auto 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.10);
+            text-align: center;
+        }
+
+        .busca label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .busca input {
+            width: 60%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        .busca button {
+            padding: 12px 18px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0d6efd;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .busca button:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* TÍTULO DA TABELA */
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        /* TABELA */
+        .tabela-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.10);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background-color: #e9ecef;
+            padding: 14px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        td {
+            padding: 14px;
+            border: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* STATUS */
+        .status {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        /* QUANDO NÃO HOUVER COMPUTADORES */
+        .sem-dados {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 700px) {
+
+            .container {
+                width: 95%;
+            }
+
+            .busca {
+                width: 100%;
+            }
+
+            .busca input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .busca button {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- TÍTULO -->
+        <h1>Inventário de Computadores</h1>
+
+        <p class="subtitulo">
+            Digite o IP da máquina para acessar/cadastrar:
+        </p>
+
+
+        <!-- BUSCA DO COMPUTADOR -->
+        <div class="busca">
+
+            <form method="POST">
+
+                <label for="ip">
+                    IP da máquina
+                </label>
+
+                <input
+                    type="text"
+                    id="ip"
+                    name="ip"
+                    placeholder="Ex: 192.168.1.10"
+                    required
+                >
+
+                <button type="submit">
+                    Buscar / Cadastrar
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- LISTA DE COMPUTADORES -->
+        <h2>Computadores Cadastrados</h2>
+
+        <div class="tabela-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Nome</th>
+                        <th>IP</th>
+                        <th>Sistema Operacional</th>
+                        <th>Versão do SO</th>
+                        <th>Memória RAM</th>
+                        <th>Processador</th>
+                        <th>Disco C:</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% if computadores %}
+
+                        {% for computador in computadores %}
+
+                        <tr>
+
+                            <td>
+                                {{ computador["Nome_Maquina"] }}
+                            </td>
+
+                            <td>
+                                {{ computador["IP"] }}
+                            </td>
+
+                            <td>
+                                {{ computador["Sistema"] }}
+                            </td>
+
+                            <td>
+                                {{ computador["SO_versao"] }}
+                            </td>
+
+                            <td>
+                                {{ computador["Memoria_RAM_GB"] }} GB
+                            </td>
+
+                            <td>
+                                {{ computador["Processador"] }}
+                            </td>
+
+                            <td>
+                                {{ computador["Disco_C_GB"] }} GB
+                            </td>
+
+                            <td class="status">
+                                Ativo
+                            </td>
+                        
+                            <td>
+                                <form method="POST" action="{{ url_for('excluir_computador', ip=computador['IP']) }}" style="display: inline;">
+                                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este computador?');">
+                                        Excluir
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="8" class="sem-dados">
+                                Nenhum computador cadastrado.
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
